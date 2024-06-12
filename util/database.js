@@ -5,8 +5,8 @@ const pool = mysql.createPool({
     host:'localhost',
     user:'root',
     database:'appdb',
-    password:'1111'
-    //password:'MJm198219##dell'
+    //password:'1111'
+    password:'MJm198219##dell'
 });
 
 // Connect to the database
