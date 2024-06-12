@@ -110,7 +110,7 @@ module.exports = class Data{
     //------------------------------> reconciliation between recon tables ------------------(3)
     /*====================> (a) activate when reconciliation between processor_recon and system_recon when insert new data from credorx_cp.*/
     static reconciliation_process_with_system_recon(){
-        const q1 = `SET SQL_SAFE_UPDATES = 0;`
+        const q1 = `SET SQL_SAFE_UPDATES = 0;`;
         const q2 = `DELETE FROM appdb.checkout_recon WHERE (reference_id, processing_curryncy_amount) IN (SELECT ID_trans, Paid FROM (SELECT t1.reference_id AS ID_trans, t1.processing_curryncy_amount AS Paid FROM appdb.checkout_recon t1 INNER JOIN appdb.system_recon_checkout t2 ON t1.reference_id = t2.ID_trans AND CAST(t1.processing_curryncy_amount AS FLOAT) = CAST(t2.Paid AS FLOAT)) AS subquery);`;
         const q3 = `SET SQL_SAFE_UPDATES = 0;`;
         const q4 = `DELETE FROM appdb.system_recon_checkout WHERE (ID_trans, Paid) IN (SELECT reference_id, processing_curryncy_amount FROM (SELECT t2.ID_trans AS reference_id, t2.Paid AS processing_curryncy_amount FROM appdb.system_recon_checkout t2 INNER JOIN appdb.checkout t1 ON t2.ID_trans = t1.reference_id AND CAST(t2.Paid AS FLOAT) = CAST(t1.processing_curryncy_amount AS FLOAT)) AS subquery);`;
@@ -189,8 +189,8 @@ module.exports = class Data{
 
 
     /************************ Get Data from database ************************/
+/* updated 11-6-2024*/
     static register_in_table(table_name, table_source,columns){
-        
         if(table_source === 'checkout'){
             const q = `INSERT INTO appdb.${table_name} (${columns[0]}, ${columns[1]},${columns[2]}, ${columns[3]}, ${columns[4]},${columns[5]}, ${columns[6]},${columns[7]}, ${columns[8]},${columns[9]}, ${columns[10]}, ${columns[11]}) SELECT Processing_Channel_ID,action_type,processed_on,processed_currency,fx_rate_applied,holding_currency,reference_id,payment_method,card_type,breakdown_type,processing_curryncy_amount,holding_currency_amount FROM appdb.${table_source} WHERE NOT EXISTS (SELECT 1 FROM ${table_name} WHERE ${table_name}.Processing_Channel_ID = ${table_source}.Processing_Channel_ID);`;
             const q_2 = `INSERT INTO appdb.checkout_index (breakdown_type,processed_currency, holding_currency_amount,Processing_Channel_ID) SELECT 'payment',(SELECT processed_currency FROM appdb.${table_source} WHERE breakdown_type = 'Capture' LIMIT 1) , (SELECT COALESCE(SUM(CAST(holding_currency_amount AS FLOAT)),0) FROM appdb.${table_name} WHERE breakdown_type = 'Capture')+(SELECT COALESCE(SUM(CAST(holding_currency_amount AS FLOAT)), 0) FROM appdb.${table_name} WHERE breakdown_type LIKE '%Fee'), (SELECT Processing_Channel_ID FROM appdb.${table_source} WHERE breakdown_type = 'Capture' LIMIT 1)`;
@@ -198,7 +198,7 @@ module.exports = class Data{
             .then(async()=>{
                 return pool.query(q_2);
             });
-        } 
+        }         
     }
 
     //Get payment

@@ -308,6 +308,7 @@ exports.deleteRow_recon_match = async(req, res, next)=>{
             break;
         case 'system_recon_checkout':
             const condition_2 = `ID_trans = "${id}"`;
+
             await db.delete_row_reconciliation_match('system_recon_checkout',condition_2)
             .then(async result =>{
                 // Delete processor transaction as auto match in checkout processor because the amount different.
@@ -413,7 +414,7 @@ exports.get_table = async(req, res, next)=>{
 //**************************  register index *************************** */
 
 exports.register_checkout_index = async(req, res, next)=>{
-    const processor = req.query.processor;
+        const processor = req.query.processor;
 
     switch (processor) {
         case 'checkout':
@@ -436,11 +437,10 @@ exports.register_checkout_index = async(req, res, next)=>{
         default:
             break;
     }
-    
 }
 
 exports.get_payment_index = async(req, res, next)=>{
-    const processor = req.query.processor;
+        const processor = req.query.processor;
     switch (processor) {
         case 'checkout':
             await db.get_payment_processor('checkout_index','breakdown_type','payment')

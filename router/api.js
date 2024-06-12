@@ -29,6 +29,7 @@ const database = require('../util/database');
 /*----------------------------------------------------*/
 //********* Create table ********/
 /*-----------> Credorex <-----------------*/
+console.log('router start');
 router.get('/processor/credorax/creatcredorextbl', processorController.createTbl_credorex);
 router.get('/processor/credorax/createcptbl', processorController.createTbl_cp);
 router.get('/processor/credorax/createcredorexindex',processorController.createTbl_credorex_index);
@@ -125,7 +126,6 @@ router.get('/processor/credorax/getsumfees', processorController.get_sum_fees);
 router.get('/processor/credorax/getsumrefund', processorController.get_sum_refund);
 router.get('/processor/credorax/getsumsystem',processorController.get_sum_recon);
 router.get('/processor/credorax/getindex',processorController.get_record_statement);
-
 
 /******************** registers ************************11/06/2024************ */
 router.post('/processor/checkout/postregister',checkoutController.register_checkout_index);

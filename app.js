@@ -15,6 +15,8 @@ const io = socketIo(server);
 const { exec } = require('child_process');
 app.use(express.static('public'));
 /*-----------------------------------------------------*/
+const api = require('./router/api');
+app.use('/api',api);
 app.use(bodyParser.json());
 //CORS
 app.use((req,res,next)=>{
@@ -49,7 +51,6 @@ app.post('/restart',(req,res)=>{
     });
 });
 /*-----------------------------------------------------*/
-const api = require('./router/api');
-app.use('/api',api);
+
 
 app.listen(PORT, console.log(`server running on port ${PORT}`));
