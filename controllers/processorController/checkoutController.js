@@ -540,13 +540,14 @@ exports.get_sum_refund = async(req, res, next)=>{
 
 exports.get_record_statement = async(req, res, next)=>{
     const processor = req.query.processor;
-    const date = req.query.date;
+    const id = req.query.id;
     const curr = req.query.curr;
 
     switch (processor) {
-        case 'credorex':
-            await db.get_record_statement('credorex_index','statement_date',date,'cs_settlement_currency',curr)
+        case 'checkout':
+            await db.get_record_statement('checkout_index','Processing_Channel_ID',id,'holding_currency',curr)
             .then(result =>{
+                console.log(result);
                 res.status(200).json({
                     result:result,
                     curr:curr

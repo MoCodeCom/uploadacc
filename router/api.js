@@ -130,6 +130,8 @@ router.get('/processor/credorax/getindex',processorController.get_record_stateme
 /******************** registers ************************11/06/2024************ */
 router.post('/processor/checkout/postregister',checkoutController.register_checkout_index);
 router.get('/processor/checkout/getpayments',checkoutController.get_payment_index);
+
+router.get('/processor/checkout/getindex',checkoutController.get_record_statement);
 /********************* Count table **************************/
 //router.get('/processor/counttable',shareController.count_table)
 
