@@ -308,7 +308,6 @@ exports.deleteRow_recon_match = async(req, res, next)=>{
             break;
         case 'system_recon_checkout':
             const condition_2 = `ID_trans = "${id}"`;
-
             await db.delete_row_reconciliation_match('system_recon_checkout',condition_2)
             .then(async result =>{
                 // Delete processor transaction as auto match in checkout processor because the amount different.
@@ -413,19 +412,19 @@ exports.get_table = async(req, res, next)=>{
 
 //**************************  register index *************************** */
 
-exports.register_credorex_index = async(req, res, next)=>{
+exports.register_checkout_index = async(req, res, next)=>{
     const processor = req.query.processor;
 
     switch (processor) {
-        case 'credorax':
-            await db.register_in_table('credorex_index','credorex',['statement_date', 'transaction_date','posting_date','transaction_currency','cs_settlement_currency','transaction_amount','transaction_type','fixed_transaction_fee','discount_rate','interchange','card_scheme_fees','acquiring_fee','net_activity','card_scheme','merchant_reference_number_h9'])
+        case 'checkout':
+            await db.register_in_table('checkout_index','checkout',['Processing_Channel_ID', 'action_type','processed_on','processed_currency','fx_rate_applied','holding_currency','reference_id','payment_method','card_type','breakdown_type','processing_curryncy_amount','holding_currency_amount'])
             .then(result =>{
                 res.status(200).json({
-                    message:'Register in credorax data is done successfully.'
+                    message:'Register in checkout data is done successfully.'
                 })
             })
             .then(async result =>{
-                await db.deleteAllData('credorex');
+                await db.deleteAllData('checkout');
             })
             .catch(error =>{
                 res.status(200).json({
@@ -443,8 +442,8 @@ exports.register_credorex_index = async(req, res, next)=>{
 exports.get_payment_index = async(req, res, next)=>{
     const processor = req.query.processor;
     switch (processor) {
-        case 'credorax':
-            await db.get_payment_processor('credorex_index','transaction_type','Payment')
+        case 'checkout':
+            await db.get_payment_processor('checkout_index','breakdown_type','payment')
             .then(result =>{
                 res.status(200).json({
                     result:result

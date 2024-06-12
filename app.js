@@ -50,6 +50,6 @@ app.post('/restart',(req,res)=>{
 });
 /*-----------------------------------------------------*/
 const api = require('./router/api');
-app.use('',api);
+app.use('/api',api);
 
 app.listen(PORT, console.log(`server running on port ${PORT}`));

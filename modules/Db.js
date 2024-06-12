@@ -111,24 +111,30 @@ module.exports = class Data{
     /*====================> (a) activate when reconciliation between processor_recon and system_recon when insert new data from credorx_cp.*/
     static reconciliation_process_with_system_recon(){
         const q1 = `SET SQL_SAFE_UPDATES = 0;`
-        const q2 = `DELETE FROM appdb.credorex_recon WHERE (merchant_reference_number_h9, transaction_amount) IN (SELECT ID_trans, Paid FROM (SELECT t1.merchant_reference_number_h9 AS ID_trans, t1.posting_date AS sDate,t1.transaction_amount AS Paid FROM appdb.credorex_recon t1 INNER JOIN appdb.system_recon t2 ON t1.merchant_reference_number_h9 = t2.ID_trans AND t1.transaction_amount = t2.Paid) AS subquery);`;
+        const q2 = `DELETE FROM appdb.credorex_recon WHERE (merchant_reference_number_h9, transaction_amount) IN (SELECT ID_trans, Paid FROM (SELECT t1.merchant_reference_number_h9 AS ID_trans, t1.posting_date AS sDate,t1.transaction_amount AS Paid FROM appdb.credorex_recon t1 INNER JOIN appdb.system_recon t2 ON t1.merchant_reference_number_h9 = t2.ID_trans AND CAST(t1.transaction_amount AS FLOAT) = CAST(t2.Paid AS FLOAT)) AS subquery);`;
         const q3 = `SET SQL_SAFE_UPDATES = 0;`;
-        const q4 = `DELETE FROM appdb.system_recon WHERE (ID_trans, Paid) IN (SELECT merchant_reference_number_h9, transaction_amount FROM (SELECT t2.ID_trans AS merchant_reference_number_h9, t2.sDate AS posting_date,t2.Paid AS transaction_amount FROM appdb.system_recon t2 INNER JOIN appdb.credorex t1 ON t2.ID_trans = t1.merchant_reference_number_h9 AND t2.Paid = t1.transaction_amount) AS subquery);`;
+        const q4 = `DELETE FROM appdb.system_recon WHERE (ID_trans, Paid) IN (SELECT merchant_reference_number_h9, transaction_amount FROM (SELECT t2.ID_trans AS merchant_reference_number_h9, t2.sDate AS posting_date,t2.Paid AS transaction_amount FROM appdb.system_recon t2 INNER JOIN appdb.credorex t1 ON t2.ID_trans = t1.merchant_reference_number_h9 AND CAST(t2.Paid AS FLOAT) = CAST(t1.transaction_amount AS FLOAT)) AS subquery);`;
         const q5 = `SET SQL_SAFE_UPDATES = 0;`;
-        const q6 = `DELETE FROM appdb.system_recon WHERE (ID_trans, Paid) IN (SELECT merchant_reference_number_h9, transaction_amount FROM (SELECT t2.ID_trans AS merchant_reference_number_h9, t2.sDate AS posting_date,t2.Paid AS transaction_amount FROM appdb.system_recon t2 INNER JOIN appdb.credorex_index t1 ON t2.ID_trans = t1.merchant_reference_number_h9 AND t2.Paid = t1.transaction_amount) AS subquery);`;
+        const q6 = `DELETE FROM appdb.system_recon WHERE (ID_trans, Paid) IN (SELECT merchant_reference_number_h9, transaction_amount FROM (SELECT t2.ID_trans AS merchant_reference_number_h9, t2.sDate AS posting_date,t2.Paid AS transaction_amount FROM appdb.system_recon t2 INNER JOIN appdb.credorex_index t1 ON t2.ID_trans = t1.merchant_reference_number_h9 AND CAST(t2.Paid AS FLOAT) = CAST(t1.transaction_amount AS FLOAT)) AS subquery);`;
         const q7 = `SET SQL_SAFE_UPDATES = 1;`;
         return pool.query(q1)
         .then(()=>{
+            console.log('q1 --> done!');
             pool.query(q2)
             .then(()=>{
+                console.log('q2 --> done!');
                 pool.query(q3)
                 .then(()=>{
+                    console.log('q3 --> done!');
                     pool.query(q4)
                     .then(()=>{
+                        console.log('q4 --> done!');
                         pool.query(q5)
                         .then(()=>{
+                            console.log('q5 --> done!');
                             pool.query(q6)
                             .then(()=>{
+                                console.log('q6 --> done!');
                                 pool.query(q7);
                             });
                         });
