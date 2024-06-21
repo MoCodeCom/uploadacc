@@ -24,10 +24,13 @@ const checkoutController = require('../controllers/processorController/checkoutC
 const shateController = require('../controllers/shareController/shareController');
 const filesController = require('../controllers/filesController');
 const apiController = require('../controllers/apiController');
+const authController = require('../controllers/authController');
 const fileUpload = require('express-fileupload');
 const database = require('../util/database');
 /*----------------------------------------------------*/
 //********* Create table ********/
+router.get('/auth/createtbl',authController.createAuthTbl);
+router.post('/auth/login',authController.isAuth);
 /*-----------> Credorex <-----------------*/
 console.log('router start');
 router.get('/processor/credorax/creatcredorextbl', processorController.createTbl_credorex);
@@ -132,6 +135,7 @@ router.post('/processor/checkout/postregister',checkoutController.register_check
 router.get('/processor/checkout/getpayments',checkoutController.get_payment_index);
 
 router.get('/processor/checkout/getindex',checkoutController.get_record_statement);
+router.get('/processor/checkout/gettable',checkoutController.get_table); //---------> to get different table data such as debit
 /********************* Count table **************************/
 //router.get('/processor/counttable',shareController.count_table)
 
@@ -144,4 +148,8 @@ router.get('/processor/api',apiController.checkoutAPI);
 router.get('/processor/checkout/getreconcheckouttbls', checkoutController.get_table);
 router.get('/processor/checkout/gettable', checkoutController.get_table);
 
+
+/*===================> list */
+router.get('/processor/checkout/getfeeslist',checkoutController.get_fees_lists);
+router.get('/processor/checkout/getrefundlist',checkoutController.get_refund_lists);
 module.exports = router;

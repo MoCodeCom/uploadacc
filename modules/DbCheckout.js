@@ -50,14 +50,14 @@ module.exports = class Data{
     
     //Create checkout table
     static createTable_checkout(){
-        const q = "CREATE TABLE appdb.checkout (id INT UNSIGNED NOT NULL AUTO_INCREMENT,Processing_Channel_ID VARCHAR(250) ,action_type VARCHAR(75) ,processed_on VARCHAR(75),processed_currency VARCHAR(20),fx_rate_applied VARCHAR(25), holding_currency VARCHAR(25),reference_id VARCHAR(50),payment_method VARCHAR(25),card_type VARCHAR(25),breakdown_type VARCHAR(75),processing_curryncy_amount VARCHAR(75),holding_currency_amount VARCHAR(75),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q = "CREATE TABLE appdb.checkout (id INT UNSIGNED NOT NULL AUTO_INCREMENT,Processing_Channel_ID VARCHAR(250) ,action_type VARCHAR(75) ,processed_on VARCHAR(75),processed_currency VARCHAR(20),fx_rate_applied VARCHAR(25), holding_currency VARCHAR(25),reference_id VARCHAR(50),payment_method VARCHAR(25),card_type VARCHAR(25),breakdown_type VARCHAR(75),processing_curryncy_amount VARCHAR(75),holding_currency_amount VARCHAR(75),statementDate VARCHAR(75),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
 
    
     //Create checkout_index
     static createTable_checkout_index(){
-        const q = "CREATE TABLE appdb.checkout_index (id INT UNSIGNED NOT NULL AUTO_INCREMENT,Processing_Channel_ID VARCHAR(250),action_type VARCHAR(75) ,processed_on VARCHAR(75),processed_currency VARCHAR(20),fx_rate_applied VARCHAR(25), holding_currency VARCHAR(25),reference_id VARCHAR(50),payment_method VARCHAR(25),card_type VARCHAR(25),breakdown_type VARCHAR(75),processing_curryncy_amount VARCHAR(75),holding_currency_amount VARCHAR(75),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q = "CREATE TABLE appdb.checkout_index (id INT UNSIGNED NOT NULL AUTO_INCREMENT,Processing_Channel_ID VARCHAR(250),action_type VARCHAR(75) ,processed_on VARCHAR(75),processed_currency VARCHAR(20),fx_rate_applied VARCHAR(25), holding_currency VARCHAR(25),reference_id VARCHAR(50),payment_method VARCHAR(25),card_type VARCHAR(25),breakdown_type VARCHAR(75),processing_curryncy_amount VARCHAR(75),holding_currency_amount VARCHAR(75),statementDate VARCHAR(75),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
 
@@ -192,13 +192,25 @@ module.exports = class Data{
 /* updated 11-6-2024*/
     static register_in_table(table_name, table_source,columns){
         if(table_source === 'checkout'){
-            const q = `INSERT INTO appdb.${table_name} (${columns[0]}, ${columns[1]},${columns[2]}, ${columns[3]}, ${columns[4]},${columns[5]}, ${columns[6]},${columns[7]}, ${columns[8]},${columns[9]}, ${columns[10]}, ${columns[11]}) SELECT Processing_Channel_ID,action_type,processed_on,processed_currency,fx_rate_applied,holding_currency,reference_id,payment_method,card_type,breakdown_type,processing_curryncy_amount,holding_currency_amount FROM appdb.${table_source} WHERE NOT EXISTS (SELECT 1 FROM ${table_name} WHERE appdb.${table_name}.Processing_Channel_ID = ${table_source}.Processing_Channel_ID);`;
-            const q_2 = `INSERT INTO appdb.checkout_index (breakdown_type,holding_currency, holding_currency_amount,processed_on,Processing_Channel_ID) SELECT 'payment',(SELECT holding_currency FROM appdb.${table_source} WHERE breakdown_type = 'Capture' LIMIT 1) , (SELECT COALESCE(SUM(CAST(holding_currency_amount AS FLOAT)),0) FROM appdb.${table_name} WHERE breakdown_type = 'Capture')+(SELECT COALESCE(SUM(CAST(holding_currency_amount AS FLOAT)), 0) FROM appdb.${table_name} WHERE breakdown_type LIKE '%Fee'), (SELECT processed_on FROM appdb.${table_name} ORDER BY processed_on DESC LIMIT 1),(SELECT Processing_Channel_ID FROM appdb.${table_name} WHERE action_type = 'Capture' LIMIT 1)`;
+            //const date = `SELECT processed_on FROM appdb.${table_source} ORDER BY id LIMIT 1;`
+            //const q_2 = `INSERT INTO appdb.checkout_index (breakdown_type, processing_curryncy_amount,processed_on,Processing_Channel_ID) SELECT 'payment', (SELECT COALESCE(SUM(CAST(processing_curryncy_amount AS FLOAT)),0) FROM appdb.${table_name} WHERE breakdown_type = 'Capture')+(SELECT COALESCE(SUM(CAST(processing_curryncy_amount AS FLOAT)), 0) FROM appdb.${table_name} WHERE breakdown_type LIKE '%Fee'), (SELECT processed_on FROM appdb.${table_name} ORDER BY processed_on DESC LIMIT 1),(SELECT Processing_Channel_ID FROM appdb.${table_name} WHERE action_type = 'Capture' LIMIT 1)`;
             //const q_2 = `INSERT INTO appdb.checkout_index (breakdown_type,processed_currency, holding_currency_amount,processed_on) SELECT 'payment',(SELECT processed_currency FROM appdb.${table_source} WHERE breakdown_type = 'Capture' LIMIT 1) , (SELECT COALESCE(SUM(CAST(holding_currency_amount AS FLOAT)),0) FROM appdb.${table_name} WHERE breakdown_type = 'Capture')+(SELECT COALESCE(SUM(CAST(holding_currency_amount AS FLOAT)), 0) FROM appdb.${table_name} WHERE breakdown_type LIKE '%Fee'), (SELECT processed_on FROM appdb.${table_name} ORDER BY processed_on DESC LIMIT 1)`;
-            return pool.query(q)
-            .then(async()=>{
-                return pool.query(q_2);
-            });
+            const q = `INSERT INTO appdb.${table_name} (${columns[0]}, ${columns[1]},${columns[2]}, ${columns[3]}, ${columns[4]},${columns[5]}, ${columns[6]},${columns[7]}, ${columns[8]},${columns[9]}, ${columns[10]}, ${columns[11]}, ${columns[12]}) SELECT Processing_Channel_ID,action_type,processed_on,processed_currency,fx_rate_applied,holding_currency,reference_id,payment_method,card_type,breakdown_type,processing_curryncy_amount,holding_currency_amount,statementDate FROM appdb.${table_source} WHERE NOT EXISTS (SELECT 1 FROM appdb.${table_name} WHERE appdb.${table_name}.processed_on = appdb.${table_source}.processed_on);`;
+            console.log(q);
+            return pool.query(q).then(res =>{
+                console.log(res);
+            })
+            /*
+            .then(async(result)=>{
+
+                return pool.query(date).then(result =>{
+                    //let processedDate = result[0][0]['processed_on'];
+                    //const q = `UPDATE appdb.checkout_index SET statementDate = ${processedDate};`;
+                })
+                //console.log(result[0][0]['processed_on']);
+                
+                 
+            })*/;
         }         
     }
 
@@ -225,7 +237,9 @@ module.exports = class Data{
     }
 
     static get_record_statement(table_name, column_id, id ,column_curr, curr){
-        const q = `SELECT * FROM appdb.${table_name} WHERE ${column_id}="${id}" AND ${column_curr} = "${curr}"`;
+        //const q = `SELECT * FROM appdb.${table_name} WHERE ${column_id}="${id}"`;
+        //const q = `SELECT * FROM appdb.${table_name}`;
+        const q = `SELECT * FROM appdb.checkout_index;`;
         return pool.query(q);
     }
 
@@ -264,6 +278,16 @@ module.exports = class Data{
     //--------------------------------------------------------------------------------------------------------------------------->
 
 
+    /************************* Lists *******************************/
+    static feesList(table_name){
+        const q =`SELECT * FROM appdb.${table_name} WHERE breakdown_type LIKE '%Fee%' OR breakdown_type LIKE '%fee%' OR breakdown_type LIKE '%FEE%';`;
+        return pool.query(q);
+    }
+
+    static refundList(table_name){
+        const q =`SELECT * FROM appdb.${table_name} WHERE breakdown_type = 'refund' OR breakdown_type = 'Refund' OR breakdown_type = 'REFUND';`;
+        return pool.query(q);
+    }
 
     
 }

@@ -656,11 +656,12 @@ exports.get_table = async(req, res, next)=>{
 
 exports.register_credorex_index = async(req, res, next)=>{
     const processor = req.query.processor;
-
+    //console.log('register here ...');
     switch (processor) {
-        case 'credorax':
+        case 'credorex':
             await db.register_in_table('credorex_index','credorex',['statement_date', 'transaction_date','posting_date','transaction_currency','cs_settlement_currency','transaction_amount','transaction_type','fixed_transaction_fee','discount_rate','interchange','card_scheme_fees','acquiring_fee','net_activity','card_scheme','merchant_reference_number_h9'])
             .then(result =>{
+                console.log('register here ...');
                 res.status(200).json({
                     message:'Register in credorax data is done successfully.'
                 })

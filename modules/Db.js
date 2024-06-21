@@ -41,10 +41,7 @@ module.exports = class Data{
         const q = "CREATE TABLE cp_credorex (id INT UNSIGNED NOT NULL AUTO_INCREMENT,ID_trans VARCHAR(20),sDate VARCHAR(20),rDate VARCHAR(50),Status VARCHAR(50),Paid VARCHAR(45),pCrn VARCHAR(45),Received VARCHAR(50),rCrn VARCHAR(50),Processor VARCHAR(50),Pay_out_agent VARCHAR(25),PID VARCHAR(50),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
-
     
-
-
     /***************** Credorx ************************/
 
     //Create credorex table
@@ -119,22 +116,22 @@ module.exports = class Data{
         const q7 = `SET SQL_SAFE_UPDATES = 1;`;
         return pool.query(q1)
         .then(()=>{
-            console.log('q1 --> done!');
+           
             pool.query(q2)
             .then(()=>{
-                console.log('q2 --> done!');
+              
                 pool.query(q3)
                 .then(()=>{
-                    console.log('q3 --> done!');
+                    
                     pool.query(q4)
                     .then(()=>{
-                        console.log('q4 --> done!');
+                       
                         pool.query(q5)
                         .then(()=>{
-                            console.log('q5 --> done!');
+                        
                             pool.query(q6)
                             .then(()=>{
-                                console.log('q6 --> done!');
+                              
                                 pool.query(q7);
                             });
                         });

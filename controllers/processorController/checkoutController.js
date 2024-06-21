@@ -33,7 +33,7 @@ exports.createTbl_checkout_index = (req,res,next)=>{
         );
     })
     .catch(error =>{
-        console.log(error.sqlMessage);
+        //console.log(error.sqlMessage);
         if(error.sqlMessage.includes('already exists')){
             res.status(200).json(
                 { message:'The table exist already in the database!'}
@@ -418,10 +418,12 @@ exports.register_checkout_index = async(req, res, next)=>{
 
     switch (processor) {
         case 'checkout':
-            await db.register_in_table('checkout_index','checkout',['Processing_Channel_ID', 'action_type','processed_on','processed_currency','fx_rate_applied','holding_currency','reference_id','payment_method','card_type','breakdown_type','processing_curryncy_amount','holding_currency_amount'])
+            await db.register_in_table('checkout_index','checkout',['Processing_Channel_ID', 'action_type','processed_on','processed_currency','fx_rate_applied','holding_currency','reference_id','payment_method','card_type','breakdown_type','processing_curryncy_amount','holding_currency_amount','statementDate'])
             .then(result =>{
+                console.log(result);
                 res.status(200).json({
-                    message:'Register in checkout data is done successfully.'
+                    message:'Register in checkout data is done successfully.',
+                    result:result
                 })
             })
             .then(async result =>{
@@ -445,6 +447,7 @@ exports.get_payment_index = async(req, res, next)=>{
         case 'checkout':
             await db.get_payment_processor('checkout_index','breakdown_type','payment')
             .then(result =>{
+                console.log(result);
                 res.status(200).json({
                     result:result
                 })
@@ -539,29 +542,24 @@ exports.get_sum_refund = async(req, res, next)=>{
 }
 
 exports.get_record_statement = async(req, res, next)=>{
-    const processor = req.query.processor;
-    const id = req.query.id;
-    const curr = req.query.curr;
-
-    switch (processor) {
-        case 'checkout':
-            await db.get_record_statement('checkout_index','Processing_Channel_ID',id,'holding_currency',curr)
+    //const processor = req.query.processor;
+    //const id = req.query.id;
+    //const curr = req.query.curr;
+    await db.get_record_statement(/*'checkout_index','Processing_Channel_ID',id*/)
             .then(result =>{
-                console.log(result);
+                //console.log(result);
                 res.status(200).json({
                     result:result,
-                    curr:curr
+                    //curr:curr
                 })
             })
             .catch(error=>{
                 res.status(200).json({
                     result:error
                 })
-            })
-            return 
-        default:
-            return
-    }
+            });
+
+        
 }
 //----------------------------> Fees
 exports.get_sum_fees = async(req, res, next)=>{
@@ -591,6 +589,38 @@ exports.get_sum_fees = async(req, res, next)=>{
     }
     
 
+}
+
+//-----------------------------> lists
+exports.get_fees_lists = async(req,res,next)=>{
+
+    await db.feesList('checkout_index')
+    .then(result =>{
+        res.status(200).json({
+            result:result,
+        })
+    })
+    .catch(error =>{
+        res.status(200).json({
+            error:error
+        })
+    })
+}
+
+
+exports.get_refund_lists = async(req,res,next)=>{
+
+    await db.refundList('checkout_index')
+    .then(result =>{
+        res.status(200).json({
+            result:result,
+        })
+    })
+    .catch(error =>{
+        res.status(200).json({
+            error:error
+        })
+    })
 }
 
 

@@ -134,6 +134,10 @@ exports.uploadprocessorcredorax = async(req, res, next)=>{
                 }
                 else if(source[0]['statement_date'] != null){
                     let count = 0;
+                    /*let sDate =  
+                    for(let i =0;i=0;i++){
+                        sDate = source[i][]
+                    }*/
                     for(let i = 0;i<source.length;i++){
                         var statement_date = source[i]['statement_date'],
                             transaction_date = source[i]['transaction_date'],
@@ -162,7 +166,8 @@ exports.uploadprocessorcredorax = async(req, res, next)=>{
                             
                             var insertStatement = 'INSERT INTO credorex(statement_date, transaction_date, posting_date, transaction_currency, cs_settlement_currency, transaction_amount,transaction_type,fixed_transaction_fee,discount_rate,interchange,card_scheme_fees,acquiring_fee,net_activity,card_scheme,merchant_reference_number_h9)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
                             var items = [statement_date, transaction_date, posting_date, transaction_currency,cs_settlement_currency, transaction_amount,transaction_type,fixed_transaction_fee,discount_rate,interchange,card_scheme_fees,acquiring_fee,net_activity,card_scheme,merchant_reference_number_h9];
-                            pool.query(insertStatement, items);
+                            pool.query(insertStatement, items)
+                            
                             count++;
                     }
                     if(count !== null || count !== 0){
@@ -289,7 +294,9 @@ exports.uploadprocessorcheckout = async(req, res, next)=>{
                 }
                 else if(source[0]['Processing Channel ID'] != null){
                     let count = 0;
+                    let statementDate = '';
                     for(let i = 0;i<source.length;i++){
+                        statementDate = source[0]['Processed On'];
                         var Processing_Channel_ID = source[i]['Processing Channel ID'],
                             action_type = source[i]['Action Type'],
                             processed_on = source[i]['Processed On'],
@@ -314,9 +321,27 @@ exports.uploadprocessorcheckout = async(req, res, next)=>{
                             }
 
 
-                            var insertStatement = 'INSERT INTO appdb.checkout(Processing_Channel_ID,action_type,processed_on,processed_currency,fx_rate_applied,holding_currency,reference_id,payment_method,card_type,breakdown_type,processing_curryncy_amount ,holding_currency_amount)VALUES(?,?,?,?,?,?,?,?,?,?,?,?)';
-                            var items = [Processing_Channel_ID,action_type, processed_on,processing_currency,fx_rate_applied,holding_currency,reference_id,payment_method,card_type,breakdown_type,processing_curryncy_amount ,holding_currency_amount];
-                            pool.query(insertStatement, items);
+                            var insertStatement = 'INSERT INTO appdb.checkout(Processing_Channel_ID,action_type,processed_on,processed_currency,fx_rate_applied,holding_currency,reference_id,payment_method,card_type,breakdown_type,processing_curryncy_amount ,holding_currency_amount, statementDate)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)';
+                            var items = [Processing_Channel_ID,action_type, processed_on,processing_currency,fx_rate_applied,holding_currency,reference_id,payment_method,card_type,breakdown_type,processing_curryncy_amount ,holding_currency_amount,statementDate];
+                            pool.query(insertStatement, items)
+                            /*
+                            .then(result =>{
+                                const date = `SELECT processed_on FROM appdb.checkout ORDER BY id LIMIT 1;`;
+                                pool.query(date).then(result =>{
+                                    let processedDate = result[0][0]['processed_on'];
+                                    console.log(processedDate);
+                                    const q1 = `SET SQL_SAFE_UPDATES = 0;`
+                                    const q2 = `UPDATE appdb.checkout SET statementDate = '${processedDate}';`;
+                                    const q3 = `SET SQL_SAFE_UPDATES = 1;`
+                                    pool.query(q1).then(()=>{
+                                        pool.query(q2).then(()=>{
+                                            pool.query(q3);
+                                        });
+                                    });
+                                })
+                                
+                                
+                            })*/;
                             count++;
                     }
                     if(count !== null || count !== 0){
