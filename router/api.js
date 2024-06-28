@@ -27,6 +27,8 @@ const apiController = require('../controllers/apiController');
 const authController = require('../controllers/authController');
 const fileUpload = require('express-fileupload');
 const database = require('../util/database');
+const expensesController = require('../controllers/expensesController/expensesContorller');
+const accountController = require('../controllers/accountController');
 /*----------------------------------------------------*/
 //********* Create table ********/
 router.get('/auth/createtbl',authController.createAuthTbl);
@@ -41,6 +43,8 @@ router.get('/processor/credorax/createcredorexindex',processorController.createT
 router.get('/processor/checkout/creatcheckouttbl', checkoutController.createTbl_checkout);
 router.get('/processor/checkout/createcptbl', checkoutController.createTbl_cp);
 router.get('/processor/checkout/createcheckoutindex',checkoutController.createTbl_checkout_index);
+
+
 
 
 //********* Delete or drop table ********/
@@ -152,4 +156,36 @@ router.get('/processor/checkout/gettable', checkoutController.get_table);
 /*===================> list */
 router.get('/processor/checkout/getfeeslist',checkoutController.get_fees_lists);
 router.get('/processor/checkout/getrefundlist',checkoutController.get_refund_lists);
+/*===================>*/
+/*----------> Expenses <-----------------*/
+/*----------> Create tables <------------*/
+//router.get('/expenses/generete_details',expensesController.createExpenses);
+router.get('/expenses/generete_list',expensesController.createExpensesList);
+/*---------> Drop table <------------*/
+router.delete('/expenses/drop',expensesController.dropExpensestbl);
+/*---------> Delete all data <-------*/
+router.delete('/expenses/deleteallexpenses', expensesController.deleteAllExpenses);
+router.delete('/expenses/delete_invoice', expensesController.deleteInvoice);
+
+/*--------> Insert data <----------------*/
+//router.post('/expenses/insert_expenses_detail', expensesController.insert_expenses_detail);
+router.post('/expenses/insert_expenses_list', expensesController.insert_expenses_list);
+router.get('/expenses/getallexpenses', expensesController.getAllExpenses);
+router.get('/expenses/getexpensesbyid',expensesController.getExpensesById);
+
+/************************* Accounts **********************/
+/************************* generate account table ************/
+router.get('/account/generateaccounttbl', accountController.createTbl_account);
+
+
+/************************ Delete table account*******************/
+router.delete('/account/dropaccounttable', accountController.deleteTbl_account);
+router.delete('/account/deleteallaccounttable', accountController.deleteAlldata);
+router.delete('/account/deleteaccount',accountController.deleteById);
+/*************************Insert account data ******************************/
+router.post('/account/addaccount',accountController.add_account);
+/************************* get accounts table ******************************/
+router.get('/account/getaccounts',accountController.get_accounts);
+
+
 module.exports = router;
