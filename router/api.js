@@ -173,7 +173,8 @@ router.post('/expenses/insert_expenses_list', expensesController.insert_expenses
 router.get('/expenses/getallexpenses', expensesController.getAllExpenses);
 router.get('/expenses/getexpensesbyid',expensesController.getExpensesById);
 router.put('/expenses/updatestatus',expensesController.updateStatus);
-
+router.get('/expenses/expensesbyaccount',expensesController.expensesByAccount);
+router.get('/expenses/allexpenses', expensesController.get_All_Expenses);
 /************************* Accounts **************************/
 /************************* generate account table ************/
 router.get('/account/generateaccounttbl', accountController.createTbl_account);

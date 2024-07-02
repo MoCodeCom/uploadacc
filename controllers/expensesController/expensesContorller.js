@@ -183,3 +183,28 @@ exports.updateStatus = (req, res, next)=>{
         console.log(error);
     })
 }
+
+exports.expensesByAccount = (req, res, next)=>{
+    const account = req.query.account;
+    expensesDb.get_invoiceByAccount(account)
+    .then(result =>{
+        res.status(200).json({
+            result:result
+        })
+    })
+    .catch(error =>{
+        console.log(error);
+    })
+}
+
+exports.get_All_Expenses = (req, res, next)=>{
+    expensesDb.get_all_expenses()
+    .then(result =>{
+        res.status(200).json({
+            result:result
+        })
+    })
+    .catch(error =>{
+        console.log(error);
+    })
+}

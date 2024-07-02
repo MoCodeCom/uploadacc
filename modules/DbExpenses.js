@@ -113,5 +113,15 @@ module.exports = class Data{
         return pool.query(q);
     }
 
+    static get_invoiceByAccount(account){
+        const q = `SELECT * FROM appdb.expenses_list WHERE account_number = "${account}"`;
+        return pool.query(q);
+    }
+
+    static get_all_expenses(){
+        const q = `SELECT * FROM appdb.expenses_list`;
+        return pool.query(q);
+    }
+
 
 }
