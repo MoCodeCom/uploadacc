@@ -161,12 +161,25 @@ exports.getExpensesById = (req, res, next)=>{
     const id = req.query.id;
     expensesDb.getExpensesById(id)
     .then(result =>{
-        console.log(result);
         res.status(200).json({
             result:result
         })
     })
     .catch(error =>{
         console.error(error);
+    })
+}
+
+exports.updateStatus = (req, res, next)=>{
+    const id = req.query.id;
+    const status = req.query.status;
+    expensesDb.updateStatus(id,status)
+    .then(result =>{
+        res.status(200).json({
+            result:result
+        })
+    })
+    .catch(error =>{
+        console.log(error);
     })
 }

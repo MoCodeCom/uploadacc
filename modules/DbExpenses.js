@@ -10,15 +10,37 @@ module.exports = class Data{
     }
 
     static createTable_expenses_list(){
-        const q = "CREATE TABLE expenses_list (id INT UNSIGNED NOT NULL AUTO_INCREMENT,invoice_number VARCHAR(100),about VARCHAR(100),beneficiary_department VARCHAR(150),invoice_date VARCHAR(75),payment_date VARCHAR(75),account_number VARCHAR(100),items VARCHAR(20),amount VARCHAR(20),total VARCHAR(20),note VARCHAR(300),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q = "CREATE TABLE expenses_list (id INT UNSIGNED NOT NULL AUTO_INCREMENT,invoice_number VARCHAR(100),about VARCHAR(100),beneficiary_department VARCHAR(150),invoice_date VARCHAR(75),payment_date VARCHAR(75),account_number VARCHAR(100),items VARCHAR(20),amount VARCHAR(20),total VARCHAR(20),note VARCHAR(300), status BOOLEAN DEFAULT FALSE,PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
 
     /*************************************************** Delete table ****************************************/
     static deleteTable(table_name){
         const q = `DROP TABLE appdb.${table_name};`;
-        console.log(q);
         return pool.query(q);
+    }
+
+    static updateStatus(id, currStatus){
+        let status;
+        
+        if(currStatus=='false'){
+            status = '0';
+        }else if(currStatus == 'true'){
+            status = '1';
+        }
+        const q1 = 'SET SQL_SAFE_UPDATES = 0;';
+        const q2 = `UPDATE appdb.expenses_list SET status = ${status} WHERE invoice_number = "${id}";`;
+        const q3 = 'SET SQL_SAFE_UPDATES = 1;';
+        return pool.query(q1)
+        .then(()=>{
+            pool.query(q2)
+            .then(()=>{
+                pool.query(q3);
+            }).catch(error => console.log(error));
+        })
+        .catch(error =>{
+            console.log(error);
+        }); ;
     }
 
     static getAllExpenses(){

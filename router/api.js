@@ -172,11 +172,11 @@ router.delete('/expenses/delete_invoice', expensesController.deleteInvoice);
 router.post('/expenses/insert_expenses_list', expensesController.insert_expenses_list);
 router.get('/expenses/getallexpenses', expensesController.getAllExpenses);
 router.get('/expenses/getexpensesbyid',expensesController.getExpensesById);
+router.put('/expenses/updatestatus',expensesController.updateStatus);
 
-/************************* Accounts **********************/
+/************************* Accounts **************************/
 /************************* generate account table ************/
 router.get('/account/generateaccounttbl', accountController.createTbl_account);
-
 
 /************************ Delete table account*******************/
 router.delete('/account/dropaccounttable', accountController.deleteTbl_account);
