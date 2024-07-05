@@ -122,6 +122,4 @@ module.exports = class Data{
         const q = `SELECT * FROM appdb.expenses_list`;
         return pool.query(q);
     }
-
-
 }

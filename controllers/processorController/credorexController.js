@@ -596,7 +596,7 @@ exports.create_recon_tables = async(req, res, next)=>{
 }
 // to copy data to recon tables
 exports.copy_data_recon_credorex = async(req, res, next)=>{
-    const credorex_rows = ['statement_date', 'transaction_date,posting_date','transaction_currency','cs_settlement_currency','transaction_amount','transaction_type','fixed_transaction_fee','discount_rate','interchange','card_scheme_fees','acquiring_fee','net_activity','card_scheme','merchant_reference_number_h9'];
+    const credorex_rows = ['statement_date', 'transaction_date','posting_date','transaction_currency','cs_settlement_currency','transaction_amount','transaction_type','fixed_transaction_fee','discount_rate','interchange','card_scheme_fees','acquiring_fee','net_activity','card_scheme','merchant_reference_number_h9'];
     const system_rows = ['ID_trans','sDate','rDate','Status','Paid','pCrn','Received','rCrn','Processor','Pay_out_agent','PID'];
     await db.copy_data_to_recon_tbl('credorex_recon','credorex',credorex_rows).then(async()=>{
         await db.copy_data_to_recon_tbl('system_recon','cp_credorex',system_rows);

@@ -29,12 +29,15 @@ const fileUpload = require('express-fileupload');
 const database = require('../util/database');
 const expensesController = require('../controllers/expensesController/expensesContorller');
 const accountController = require('../controllers/accountController');
+const truelayerController = require('../controllers/processorController/truelayerController');
 /*----------------------------------------------------*/
-//********* Create table ********/
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Create table                               |
+//|_____________________________________________________________________|
 router.get('/auth/createtbl',authController.createAuthTbl);
 router.post('/auth/login',authController.isAuth);
 /*-----------> Credorex <-----------------*/
-console.log('router start');
 router.get('/processor/credorax/creatcredorextbl', processorController.createTbl_credorex);
 router.get('/processor/credorax/createcptbl', processorController.createTbl_cp);
 router.get('/processor/credorax/createcredorexindex',processorController.createTbl_credorex_index);
@@ -44,13 +47,33 @@ router.get('/processor/checkout/creatcheckouttbl', checkoutController.createTbl_
 router.get('/processor/checkout/createcptbl', checkoutController.createTbl_cp);
 router.get('/processor/checkout/createcheckoutindex',checkoutController.createTbl_checkout_index);
 
+/*---------> Truelayer <------------------*/
 
+router.get('/processor/truelayer/creattruelayertbl', truelayerController.createTbl_truelayer);
+router.get('/processor/truelayer/createcptbl', truelayerController.createTbl_cp);
+router.get('/processor/truelayer/createtruelayerindex', truelayerController.createTbl_truelayer_index);
 
 
 //********* Delete or drop table ********/
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Clear/Drop table                          |
+//|_____________________________________________________________________|
+//************************* Drop table *************************** */
 router.delete('/processor/credorax/deletetbl', processorController.deletetbl);
 /*-------------------> Checkout <----------------------*/
 router.delete('/processor/checkout/deletetbl', checkoutController.deletetbl);
+/*-------------------> Truelayer <---------------------*/
+router.delete('/processor/truelayer/deletetbl', truelayerController.deletetbl);
+
+
+/*************************** Clear data ************************** */
+/*-----------------> Credorex <--------------------------------*/
+router.delete('/processor/credorax/deletealldata',processorController.deleteAllData);
+/*-----------------> Checkout <--------------------------------*/
+router.delete('/processor/checkout/deletealldata',checkoutController.deleteAllData);
+/*-----------------> Truelayer <-------------------------------*/
+router.delete('/processor/truelayer/deletealldata',truelayerController.deleteAllData);
 
 //router.delete('/processor/credorax/deletcredorextbl', processorController.deleteTbl_credorex);
 //router.delete('/processor/credorax/deletecptbl', processorController.deleteTbl_cp);
@@ -59,13 +82,19 @@ router.delete('/processor/checkout/deletetbl', checkoutController.deletetbl);
 
 
 //********* Upload Data *********/
+//|_____________________________________________________________________|
+//|                                                                     |
+//|                          Upload data                                |
+//|_____________________________________________________________________|
 //---------------------------> Credorex <-------------------------//
 router.post('/processor/credorax/uploadcredorex',fileUpload(uploadOpts), filesController.uploadprocessorcredorax);
 router.post('/processor/credorax/uploadcpcredorex',fileUpload(uploadcpfile),filesController.uploadcpcredorax);
-
 //--------------------------> Checkout <-------------------------//
 router.post('/processor/checkout/uploadcheckout',fileUpload(uploadOpts), filesController.uploadprocessorcheckout);
 router.post('/processor/checkout/uploadcpcheckout',fileUpload(uploadcpfile),filesController.uploadcpcheckout);
+//--------------------------> Truelayer <-------------------------//
+router.post('/processor/truelayer/uploadtruelayer',fileUpload(uploadOpts), filesController.uploadprocessortruelayer);
+router.post('/processor/truelayer/uploadcptruelayer',fileUpload(uploadcpfile),filesController.uploadcptruelayer);
 
 //********* Reconciliation ***********/
 //router.get('/processor/credorax/reconcredorex',processorController.reconciliation_credorex);
@@ -74,12 +103,22 @@ router.post('/processor/checkout/uploadcpcheckout',fileUpload(uploadcpfile),file
 //router.get('/processor/credorax/updaterecon',processorController.update_recon);
 
 //-----------------------------> plan 2
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Recon database                             |
+//|_____________________________________________________________________|
 /*----------------------------->Credorex <----------------------------- */
 router.get('/processor/credorax/createrecontbls', processorController.create_recon_tables); // to build recon tables
 /*-----------------------------> Checkout <---------------------------- */
 router.get('/processor/checkout/createrecontbls', checkoutController.create_recon_tables); // to build recon tables
+/*-----------------------------> Truelayer <---------------------------*/
+router.get('/processor/truelayer/createrecontbls', truelayerController.create_recon_tables);
 
 /*==========================================================================================*/
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Recon process                              |
+//|_____________________________________________________________________|
 /*----------------------------> Credorex <-------------------------------*/
 router.get('/processor/credorax/copyrecon',processorController.copy_data_recon_credorex); //(1)---> to copy data to recon tables
 router.get('/processor/credorax/credorexsystemwithprocessorrecon',processorController.reconciliation_process_with_system_recon);//(2)(3)----> to recon processor with system
@@ -87,6 +126,10 @@ router.get('/processor/credorax/credorexsystemwithprocessorrecon',processorContr
 /*----------------------------> Checkout <--------------------------------*/
 router.get('/processor/checkout/copyrecon',checkoutController.copy_data_recon_checkout); //(1)---> to copy data to recon tables
 router.get('/processor/checkout/checkoutsystemwithprocessorrecon',checkoutController.reconciliation_process_with_system_recon);//(2)(3)----> to recon processor with system
+
+/*----------------------------> Truelayer <--------------------------------*/
+router.get('/processor/truelayer/copyrecon',truelayerController.copy_data_recon_truelayer); //(1)---> to copy data to recon tables
+router.get('/processor/truelayer/truelayersystemwithprocessorrecon',truelayerController.reconciliation_process_with_system_recon);//(2)(3)----> to recon processor with system
 
 /*==========================================================================================*/
 router.get('/processor/credorax/getreconcredorextbls', processorController.get_table);//------> get data for recon after copying
@@ -99,29 +142,35 @@ router.delete('/processor/credorax/deleteallcredorex',processorController.delete
 router.delete('/processor/credorax/deleteallcpcredorex',processorController.deleteAllData_cp_credorex);
 router.delete('/processor/credorax/deleteallcredorexindex',processorController.deleteAllData_credorex_index);
 */
-/*************************** Delete data ************************** */
-/*-----------------> Credorex <--------------------------------*/
-router.delete('/processor/credorax/deletealldata',processorController.deleteAllData);
-/*-----------------> Checkout <--------------------------------*/
-router.delete('/processor/checkout/deletealldata',checkoutController.deleteAllData);
+
 
 
 /************************** Matching ******************************** */
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Matcing                                    |
+//|_____________________________________________________________________|
 /*----------------------> Credorex <--------------------- */
 router.delete('/processor/credorax/deleterowrecon/:id',processorController.deleteRow_recon_match); // matching
 /*----------------------> Checout <-----------------------*/
 router.delete('/processor/checkout/deleterowrecon/:id',checkoutController.deleteRow_recon_match); // matching
+/*----------------------> Truelayer <-----------------------*/
+router.delete('/processor/truelayer/deleterowrecon/:id',truelayerController.deleteRow_recon_match); // matching
 
 //router.delete('/processor/credorax/deleterowreconcredorexauto',processorController.deleteRow_recon_credorex_auto);
 //router.delete('/processor/credorax/deletesamecredorax', processorController.delete_same_credorax);
 //************ Checkout API *******************/
 router.get('/getcheckoutpayment',apiController.checkoutAPI);
-
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Search                                     |
+//|_____________________________________________________________________|
 /******************** Searching credorex ********************/
 //router.get('/processor/credorax/searchcredorexprocessor/:item',processorController.searching_processor_recon_credorex_processor);
 //router.get('/processor/credorax/searchcredorexsystem/:item',processorController.searching_processor_recon_credorex_system); 
 router.get('/processor/credorax/searchprocessor/:item',processorController.searching_processor_recon);
 router.get('/processor/checkout/searchprocessor/:item',checkoutController.searching_processor_recon);
+router.get('/processor/truelayer/searchprocessor/:item',truelayerController.searching_processor_recon);
 /******************** Get with date *************************/
 router.get('/processor/credorax/getrecondate/:date',processorController.get_reconciliation_credorex_dateCondition);
 
@@ -156,7 +205,18 @@ router.get('/processor/checkout/gettable', checkoutController.get_table);
 /*===================> list */
 router.get('/processor/checkout/getfeeslist',checkoutController.get_fees_lists);
 router.get('/processor/checkout/getrefundlist',checkoutController.get_refund_lists);
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Truelayer                                  |
+//|_____________________________________________________________________|
+// get table truelayer ...
+router.get('/processor/truelayer/getrecontruelayertbls', truelayerController.get_table);
+
 /*===================>*/
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Expenses                                   |
+//|_____________________________________________________________________|
 /*----------> Expenses <-----------------*/
 /*----------> Create tables <------------*/
 //router.get('/expenses/generete_details',expensesController.createExpenses);
@@ -176,6 +236,10 @@ router.put('/expenses/updatestatus',expensesController.updateStatus);
 router.get('/expenses/expensesbyaccount',expensesController.expensesByAccount);
 router.get('/expenses/allexpenses', expensesController.get_All_Expenses);
 /************************* Accounts **************************/
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                           Accounts                                  |
+//|_____________________________________________________________________|
 /************************* generate account table ************/
 router.get('/account/generateaccounttbl', accountController.createTbl_account);
 
@@ -187,6 +251,9 @@ router.delete('/account/deleteaccount',accountController.deleteById);
 router.post('/account/addaccount',accountController.add_account);
 /************************* get accounts table ******************************/
 router.get('/account/getaccounts',accountController.get_accounts);
+
+/*************************** Truelayer **************************************/
+router.get('')
 
 
 module.exports = router;

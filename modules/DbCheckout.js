@@ -116,7 +116,9 @@ module.exports = class Data{
         const q4 = `DELETE FROM appdb.system_recon_checkout WHERE (ID_trans, Paid) IN (SELECT reference_id, processing_curryncy_amount FROM (SELECT t2.ID_trans AS reference_id, t2.Paid AS processing_curryncy_amount FROM appdb.system_recon_checkout t2 INNER JOIN appdb.checkout t1 ON t2.ID_trans = t1.reference_id AND CAST(t2.Paid AS FLOAT) = CAST(t1.processing_curryncy_amount AS FLOAT)) AS subquery);`;
         const q5 = `SET SQL_SAFE_UPDATES = 0;`;
         const q6 = `DELETE FROM appdb.system_recon_checkout WHERE (ID_trans, Paid) IN (SELECT reference_id, processing_curryncy_amount FROM (SELECT t2.ID_trans AS reference_id, t2.Paid AS processing_curryncy_amount FROM appdb.system_recon_checkout t2 INNER JOIN appdb.checkout_index t1 ON t2.ID_trans = t1.reference_id AND CAST(t2.Paid AS FLOAT) = CAST(t1.processing_curryncy_amount AS FLOAT)) AS subquery);`;
-        const q7 = `SET SQL_SAFE_UPDATES = 1;`;
+        const q7 = `SET SQL_SAFE_UPDATES = 0;`;
+        const q8 = `DELETE FROM appdb.checkout_recon WHERE (reference_id, processing_curryncy_amount) IN (SELECT ID_trans, Paid FROM (SELECT t1.reference_id AS ID_trans, t1.processing_curryncy_amount AS Paid FROM appdb.checkout_recon t1 INNER JOIN appdb.cp_checkout t2 ON t1.reference_id = t2.ID_trans AND CAST(t1.processing_curryncy_amount AS FLOAT) = CAST(t2.Paid AS FLOAT)) AS subquery);`;
+        const q9 = `SET SQL_SAFE_UPDATES = 1;`;
         return pool.query(q1)
         .then(()=>{
             pool.query(q2)
@@ -129,8 +131,14 @@ module.exports = class Data{
                         .then(()=>{
                             pool.query(q6)
                             .then(()=>{
-                                pool.query(q7);
-                            });
+                                pool.query(q7)
+                                .then(()=>{
+                                   pool.query(q8)
+                                   .then(()=>{
+                                       pool.query(q9);
+                                   })
+                               })
+                           });
                         });
                     });
                 });

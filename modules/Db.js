@@ -78,6 +78,10 @@ module.exports = class Data{
         });
     }
     //--------------------------------> plan 2
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Plan 2                                     |
+//|_____________________________________________________________________|
     //--------------------------------> create tables -------------------------------(1)
     static reconciliation_table_processor(){
         const q=`CREATE TABLE credorex_recon (id INT UNSIGNED NOT NULL AUTO_INCREMENT,statement_date VARCHAR(20) ,transaction_date VARCHAR(20),posting_date VARCHAR(20) ,transaction_currency VARCHAR(50),cs_settlement_currency VARCHAR(50)  ,transaction_amount VARCHAR(45),transaction_type VARCHAR(150) ,fixed_transaction_fee VARCHAR(45) ,discount_rate VARCHAR(50),interchange VARCHAR(50),card_scheme_fees VARCHAR(50),acquiring_fee VARCHAR(50),net_activity VARCHAR(50),card_scheme VARCHAR(50), merchant_reference_number_h9 VARCHAR(50),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);`;
