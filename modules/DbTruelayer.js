@@ -34,7 +34,7 @@ module.exports = class Data{
     
     //Create Truelayer table
     static createTable_truelayer(){
-        const q = "CREATE TABLE appdb.truelayer (id INT UNSIGNED NOT NULL AUTO_INCREMENT,amount VARCHAR(70) ,currency VARCHAR(75) ,status VARCHAR(75),type VARCHAR(20),reference VARCHAR(25),date VARCHAR(80),provideName VARCHAR(150),failureReason VARCHAR(250),statementDate VARCHAR(75),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q = "CREATE TABLE appdb.truelayer (id INT UNSIGNED NOT NULL AUTO_INCREMENT,amount VARCHAR(170) ,currency VARCHAR(175) ,status VARCHAR(175),type VARCHAR(120),reference VARCHAR(225),date VARCHAR(180),provideName VARCHAR(250),failureReason VARCHAR(250),statementDate VARCHAR(75),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
 
