@@ -27,7 +27,7 @@ module.exports = class Data{
 
     //create table cp _ truelayer
     static createTable_cp_truelayer(){
-        const q = "CREATE TABLE cp_truelayer (id INT UNSIGNED NOT NULL AUTO_INCREMENT,ID_trans VARCHAR(20),sDate VARCHAR(20),rDate VARCHAR(50),Status VARCHAR(50),Paid VARCHAR(45),pCrn VARCHAR(45),Received VARCHAR(150),rCrn VARCHAR(50),Processor VARCHAR(50),Pay_out_agent VARCHAR(25),PID VARCHAR(50),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q = "CREATE TABLE cp_truelayer (id INT UNSIGNED NOT NULL AUTO_INCREMENT,ID_trans VARCHAR(120),sDate VARCHAR(120),rDate VARCHAR(150),Status VARCHAR(150),Paid VARCHAR(145),pCrn VARCHAR(145),Received VARCHAR(150),rCrn VARCHAR(150),Processor VARCHAR(150),Pay_out_agent VARCHAR(125),PID VARCHAR(150),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
     
@@ -40,19 +40,19 @@ module.exports = class Data{
 
     //----------------------------> Truelayer recon tables <--------------------------------//
     static reconciliation_table_processor(){
-        const q="CREATE TABLE appdb.truelayer_recon (id INT UNSIGNED NOT NULL AUTO_INCREMENT,amount VARCHAR(70) ,currency VARCHAR(75) ,status VARCHAR(75),type VARCHAR(20),reference VARCHAR(25),date VARCHAR(80),provideName VARCHAR(150),failureReason VARCHAR(250),statementDate VARCHAR(75),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q="CREATE TABLE appdb.truelayer_recon (id INT UNSIGNED NOT NULL AUTO_INCREMENT,amount VARCHAR(170) ,currency VARCHAR(175) ,status VARCHAR(175),type VARCHAR(120),reference VARCHAR(125),date VARCHAR(180),provideName VARCHAR(250),failureReason VARCHAR(250),statementDate VARCHAR(175),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
 
     static reconciliation_table_system(){
-        const q ="CREATE TABLE appdb.system_recon_truelayer (id INT UNSIGNED NOT NULL AUTO_INCREMENT,ID_trans VARCHAR(20),sDate VARCHAR(20),rDate VARCHAR(50),Status VARCHAR(50),Paid VARCHAR(45),pCrn VARCHAR(45),Received VARCHAR(50),rCrn VARCHAR(50),Processor VARCHAR(50),Pay_out_agent VARCHAR(25),PID VARCHAR(50),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q ="CREATE TABLE appdb.system_recon_truelayer (id INT UNSIGNED NOT NULL AUTO_INCREMENT,ID_trans VARCHAR(120),sDate VARCHAR(120),rDate VARCHAR(150),Status VARCHAR(150),Paid VARCHAR(145),pCrn VARCHAR(145),Received VARCHAR(150),rCrn VARCHAR(150),Processor VARCHAR(150),Pay_out_agent VARCHAR(125),PID VARCHAR(150),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
     
     //----------------------------> Truelayer index table <--------------------------------//
     //Create Truelayer_index
     static createTable_truelayer_index(){
-        const q = "CREATE TABLE appdb.truelayer_index (id INT UNSIGNED NOT NULL AUTO_INCREMENT,amount VARCHAR(70) ,currency VARCHAR(75) ,status VARCHAR(75),type VARCHAR(20),reference VARCHAR(25),date VARCHAR(80),provideName VARCHAR(150),failureReason VARCHAR(250),statementDate VARCHAR(75),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q = "CREATE TABLE appdb.truelayer_index (id INT UNSIGNED NOT NULL AUTO_INCREMENT,amount VARCHAR(170) ,currency VARCHAR(175) ,status VARCHAR(175),type VARCHAR(120),reference VARCHAR(125),date VARCHAR(180),provideName VARCHAR(250),failureReason VARCHAR(250),statementDate VARCHAR(175),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
 

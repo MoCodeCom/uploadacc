@@ -205,11 +205,13 @@ exports.deleteAllData = async(req, res, next)=>{
 exports.copy_data_recon_truelayer = async(req, res, next)=>{
     const truelayer_rows = ['amount','currency','status','type','reference','date','provideName','failureReason','statementDate'];
     const system_rows = ['ID_trans','sDate','rDate','Status','Paid','pCrn','Received','rCrn','Processor','Pay_out_agent','PID'];
-    await db.copy_data_to_recon_tbl('truelayer_recon','truelayer',truelayer_rows).then(async()=>{
+    await db.copy_data_to_recon_tbl('truelayer_recon','truelayer',truelayer_rows)
+    .then(async()=>{
+        console.log('copy data 1 is done!');
         await db.copy_data_to_recon_tbl('system_recon_truelayer','cp_truelayer',system_rows);
     })
     .then(async result =>{
-        
+        console.log('copy data 2 is done!');
         res.status(200).json({
                 message:'copy data is successful'
         })
