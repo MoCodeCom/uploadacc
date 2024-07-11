@@ -452,6 +452,7 @@ exports.uploadcptruelayer = async(req, res, next)=>{
                                 var items = [ID,sDate, rDate, Status, Paid, pCrn, Received, rCrn, Processor, payoutagent, PID];
                                 await pool.query(insertStatement, items);
                                 count++;
+                                console.log(count);
                         }
                         if(count !== null || count !== 0){
                             res.status(200).json({
