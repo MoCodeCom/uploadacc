@@ -598,19 +598,18 @@ exports.create_recon_tables = async(req, res, next)=>{
 exports.copy_data_recon_credorex = async(req, res, next)=>{
     const credorex_rows = ['statement_date', 'transaction_date','posting_date','transaction_currency','cs_settlement_currency','transaction_amount','transaction_type','fixed_transaction_fee','discount_rate','interchange','card_scheme_fees','acquiring_fee','net_activity','card_scheme','merchant_reference_number_h9'];
     const system_rows = ['ID_trans','sDate','rDate','Status','Paid','pCrn','Received','rCrn','Processor','Pay_out_agent','PID'];
-    await db.copy_data_to_recon_tbl('credorex_recon','credorex',credorex_rows).then(async()=>{
-        await db.copy_data_to_recon_tbl('system_recon','cp_credorex',system_rows);
-    })
-    .then(async result =>{
-        
-        res.status(200).json({
-                message:'copy data is successful'
+    await db.copy_data_to_recon_tbl('credorex_recon','credorex',credorex_rows).then(()=>console.log('done!!'))
+    .then(async()=>{
+            await db.copy_data_to_recon_tbl('system_recon','cp_credorex',system_rows);
         })
-    })
-    .catch(error =>{
-        res.status(200).json({
-            message:error
-        })
+        .then(async result =>{
+            res.status(200).json({
+                    message:'copy data is successful'
+            })
+        }).catch(error =>{
+            res.status(200).json({
+                message:error
+            })
     });
 }
 // to recon steps 1) 2)
@@ -661,7 +660,7 @@ exports.register_credorex_index = async(req, res, next)=>{
         case 'credorex':
             await db.register_in_table('credorex_index','credorex',['statement_date', 'transaction_date','posting_date','transaction_currency','cs_settlement_currency','transaction_amount','transaction_type','fixed_transaction_fee','discount_rate','interchange','card_scheme_fees','acquiring_fee','net_activity','card_scheme','merchant_reference_number_h9'])
             .then(result =>{
-                console.log('register here ...');
+                //console.log('register here ...');
                 res.status(200).json({
                     message:'Register in credorax data is done successfully.'
                 })

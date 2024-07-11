@@ -174,7 +174,11 @@ router.get('/processor/truelayer/searchprocessor/:item',truelayerController.sear
 /******************** Get with date *************************/
 router.get('/processor/credorax/getrecondate/:date',processorController.get_reconciliation_credorex_dateCondition);
 
-/******************** Register *******************************/
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Register                                   |
+//|_____________________________________________________________________|
+/******************** Register credorax *******************************/
 router.post('/processor/credorax/postregister',processorController.register_credorex_index);
 router.get('/processor/credorax/getpayments',processorController.get_payment_index);
 router.get('/processor/credorax/getsumpayments',processorController.get_sum_payment);
@@ -183,12 +187,17 @@ router.get('/processor/credorax/getsumrefund', processorController.get_sum_refun
 router.get('/processor/credorax/getsumsystem',processorController.get_sum_recon);
 router.get('/processor/credorax/getindex',processorController.get_record_statement);
 
-/******************** registers ************************11/06/2024************ */
+/******************** Registers checkout ************************11/06/2024************ */
 router.post('/processor/checkout/postregister',checkoutController.register_checkout_index);
 router.get('/processor/checkout/getpayments',checkoutController.get_payment_index);
-
 router.get('/processor/checkout/getindex',checkoutController.get_record_statement);
 router.get('/processor/checkout/gettable',checkoutController.get_table); //---------> to get different table data such as debit
+
+/********************** Register Truelayer *********************************************/
+router.post('/processor/truelayer/postregister',truelayerController.register_truelayer_index);
+router.get('/processor/truelayer/getpayments',truelayerController.get_payment_index);
+router.get('/processor/truelayer/getindex',truelayerController.get_record_statement);
+router.get('/processor/truelayer/gettable',truelayerController.get_table); //---------> to get different table data such as debit
 /********************* Count table **************************/
 //router.get('/processor/counttable',shareController.count_table)
 
@@ -201,10 +210,18 @@ router.get('/processor/api',apiController.checkoutAPI);
 router.get('/processor/checkout/getreconcheckouttbls', checkoutController.get_table);
 router.get('/processor/checkout/gettable', checkoutController.get_table);
 
-
-/*===================> list */
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Analysis list                              |
+//|_____________________________________________________________________|
+/*===================> list checkout */
 router.get('/processor/checkout/getfeeslist',checkoutController.get_fees_lists);
 router.get('/processor/checkout/getrefundlist',checkoutController.get_refund_lists);
+
+/*===================> list truelayer */
+router.get('/processor/truelayer/getrefundlist',truelayerController.get_refund_lists);
+
+
 //|---------------------------------------------------------------------|
 //|                                                                     |
 //|                          Truelayer                                  |

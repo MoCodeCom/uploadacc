@@ -309,7 +309,7 @@ exports.searching_processor_recon = async(req, res, next)=>{
 
 //|---------------------------------------------------------------------|
 //|                                                                     |
-//|                          Matching                                  |
+//|                          Matching                                   |
 //|_____________________________________________________________________|
 //delete row from recon table "MATCH"
 exports.deleteRow_recon_match = async(req, res, next)=>{
@@ -355,6 +355,131 @@ exports.deleteRow_recon_match = async(req, res, next)=>{
 
     
 }
+
+
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Register                                   |
+//|_____________________________________________________________________|
+
+//**************************  register index *************************** */
+
+exports.register_truelayer_index = async(req, res, next)=>{
+    const processor = req.query.processor;
+    if(processor === 'truelayer'){
+        await db.register_in_table()
+        .then(result =>{
+            res.status(200).json({
+                message:'Register in checkout data is done successfully.',
+                result:result
+            })
+        })
+        .then(async result =>{
+            await db.deleteAllData('truelayer');
+        })
+        .catch(error =>{
+            res.status(200).json({
+                message:error
+            })
+        });
+    }
+}
+
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Get Payment                                |
+//|_____________________________________________________________________|
+
+//**************************  Get Payment *************************** */
+exports.get_payment_index = async(req, res, next)=>{
+    const processor = req.query.processor;
+    switch (processor) {
+        case 'truelayer':
+            await db.get_payment_processor('truelayer_index','type','payout')
+            .then(result =>{
+                res.status(200).json({
+                    result:result
+                })
+            })
+            .catch(error =>{
+                res.status(200).json({
+                    result:error
+                })
+            });
+            break;
+    
+        default:
+            break;
+    }
+}
+
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Get Record index                           |
+//|_____________________________________________________________________|
+
+exports.get_record_statement = async(req, res, next)=>{
+    const processor = req.query.processor;
+    const statementDate = req.query.statementDate;
+    const reference = req.query.reference;
+    await db.get_record_statement('truelayer_index','statementDate',statementDate,'reference',reference)
+            .then(result =>{
+                res.status(200).json({
+                    result:result,
+                    statementDate:statementDate
+                })
+            })
+            .catch(error=>{
+                res.status(200).json({
+                    result:error
+                })
+            });
+}
+
+
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Get table [debit]                          |
+//|_____________________________________________________________________|
+
+//to get data in recon tables
+exports.get_table = async(req, res, next)=>{
+    const table_name = req.query.table;
+    await db.get_table(table_name)
+    .then(async(result)=>{
+        res.status(200).json({
+            result:result,
+            message:'get reconciliation table is done!.'
+        })
+    })
+    .catch(error =>{
+        res.status(200).json({
+            message:error
+        })
+    });
+}
+
+
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Analysis list                              |
+//|_____________________________________________________________________|
+
+exports.get_refund_lists = async(req,res,next)=>{
+
+    await db.refundList('truelayer_index')
+    .then(result =>{
+        res.status(200).json({
+            result:result,
+        })
+    })
+    .catch(error =>{
+        res.status(200).json({
+            error:error
+        })
+    })
+}
+
 
 
 

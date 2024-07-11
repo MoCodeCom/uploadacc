@@ -392,6 +392,7 @@ exports.reconciliation_process_with_system_recon = async(req, res, next)=>{
         })
     })
 }
+
 //to get data in recon tables
 exports.get_table = async(req, res, next)=>{
     const table_name = req.query.table;
@@ -420,7 +421,7 @@ exports.register_checkout_index = async(req, res, next)=>{
         case 'checkout':
             await db.register_in_table('checkout_index','checkout',['Processing_Channel_ID', 'action_type','processed_on','processed_currency','fx_rate_applied','holding_currency','reference_id','payment_method','card_type','breakdown_type','processing_curryncy_amount','holding_currency_amount','statementDate'])
             .then(result =>{
-                console.log(result);
+                //console.log(result);
                 res.status(200).json({
                     message:'Register in checkout data is done successfully.',
                     result:result

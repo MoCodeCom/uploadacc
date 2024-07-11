@@ -98,10 +98,10 @@ module.exports = class Data{
 
         switch (table_source) {
             case 'credorex':
-                const q1 = `INSERT INTO appdb.${table_name} (${columns[0]}, ${columns[1]},${columns[2]}, ${columns[3]}, ${columns[4]},${columns[5]}, ${columns[6]},${columns[7]}, ${columns[8]},${columns[9]}, ${columns[10]}, ${columns[11]},${columns[12]}, ${columns[13]}) SELECT statement_date, transaction_date,posting_date,transaction_currency,cs_settlement_currency,transaction_amount,transaction_type,fixed_transaction_fee,discount_rate,interchange,card_scheme_fees,acquiring_fee,net_activity,card_scheme,merchant_reference_number_h9 FROM appdb.${table_source} WHERE NOT EXISTS (SELECT 1 FROM ${table_name} WHERE ${table_name}.statement_date = ${table_source}.statement_date);`;
+                const q1 = `INSERT INTO appdb.${table_name} (${columns[0]}, ${columns[1]},${columns[2]}, ${columns[3]}, ${columns[4]},${columns[5]}, ${columns[6]},${columns[7]}, ${columns[8]},${columns[9]}, ${columns[10]}, ${columns[11]},${columns[12]}, ${columns[13]},${columns[14]}) SELECT statement_date,transaction_date,posting_date,transaction_currency,cs_settlement_currency,transaction_amount,transaction_type,fixed_transaction_fee,discount_rate,interchange,card_scheme_fees,acquiring_fee,net_activity,card_scheme,merchant_reference_number_h9 FROM appdb.${table_source} WHERE NOT EXISTS (SELECT 1 FROM appdb.${table_name} WHERE appdb.${table_name}.statement_date = ${table_source}.statement_date);`;
                 return pool.query(q1);
             case 'cp_credorex':
-                const q2 = `INSERT INTO appdb.${table_name} (${columns[0]}, ${columns[1]},${columns[2]}, ${columns[3]}, ${columns[4]},${columns[5]}, ${columns[6]},${columns[7]}, ${columns[8]},${columns[9]}, ${columns[10]}) SELECT ID_trans, sDate,rDate,Status,Paid,pCrn,Received,rCrn,Processor,Pay_out_agent,PID FROM appdb.${table_source} WHERE NOT EXISTS (SELECT 1 FROM ${table_name} WHERE ${table_name}.sDate = ${table_source}.sDate);`;
+                const q2 = `INSERT INTO appdb.${table_name} (${columns[0]}, ${columns[1]},${columns[2]}, ${columns[3]}, ${columns[4]},${columns[5]}, ${columns[6]},${columns[7]}, ${columns[8]},${columns[9]}, ${columns[10]}) SELECT ID_trans,sDate,rDate,Status,Paid,pCrn,Received,rCrn,Processor,Pay_out_agent,PID FROM appdb.${table_source} WHERE NOT EXISTS (SELECT 1 FROM appdb.${table_name} WHERE appdb.${table_name}.sDate = ${table_source}.sDate);`;
                 return pool.query(q2); 
             default:
                 return
@@ -112,39 +112,39 @@ module.exports = class Data{
     /*====================> (a) activate when reconciliation between processor_recon and system_recon when insert new data from credorx_cp.*/
     static reconciliation_process_with_system_recon(){
         const q1 = `SET SQL_SAFE_UPDATES = 0;`
-        const q2 = `DELETE FROM appdb.credorex_recon WHERE (merchant_reference_number_h9, transaction_amount) IN (SELECT ID_trans, Paid FROM (SELECT t1.merchant_reference_number_h9 AS ID_trans, t1.posting_date AS sDate,t1.transaction_amount AS Paid FROM appdb.credorex_recon t1 INNER JOIN appdb.system_recon t2 ON t1.merchant_reference_number_h9 = t2.ID_trans AND CAST(t1.transaction_amount AS FLOAT) = CAST(t2.Paid AS FLOAT)) AS subquery);`;
+        const q2 = `DELETE FROM appdb.credorex_recon WHERE (merchant_reference_number_h9, transaction_amount) IN (SELECT ID_trans, Paid FROM (SELECT t1.merchant_reference_number_h9 AS ID_trans, t1.transaction_amount AS Paid FROM appdb.credorex_recon t1 INNER JOIN appdb.system_recon t2 ON t1.merchant_reference_number_h9 = t2.ID_trans AND CAST(t1.transaction_amount AS FLOAT) = CAST(t2.Paid AS FLOAT)) AS subquery);`;
         const q3 = `SET SQL_SAFE_UPDATES = 0;`;
-        const q4 = `DELETE FROM appdb.system_recon WHERE (ID_trans, Paid) IN (SELECT merchant_reference_number_h9, transaction_amount FROM (SELECT t2.ID_trans AS merchant_reference_number_h9, t2.sDate AS posting_date,t2.Paid AS transaction_amount FROM appdb.system_recon t2 INNER JOIN appdb.credorex t1 ON t2.ID_trans = t1.merchant_reference_number_h9 AND CAST(t2.Paid AS FLOAT) = CAST(t1.transaction_amount AS FLOAT)) AS subquery);`;
+        const q4 = `DELETE FROM appdb.system_recon WHERE (ID_trans, Paid) IN (SELECT merchant_reference_number_h9, transaction_amount FROM (SELECT t2.ID_trans AS merchant_reference_number_h9, t2.Paid AS transaction_amount FROM appdb.system_recon t2 INNER JOIN appdb.credorex t1 ON t2.ID_trans = t1.merchant_reference_number_h9 AND CAST(t2.Paid AS FLOAT) = CAST(t1.transaction_amount AS FLOAT)) AS subquery);`;
         const q5 = `SET SQL_SAFE_UPDATES = 0;`;
-        const q6 = `DELETE FROM appdb.system_recon WHERE (ID_trans, Paid) IN (SELECT merchant_reference_number_h9, transaction_amount FROM (SELECT t2.ID_trans AS merchant_reference_number_h9, t2.sDate AS posting_date,t2.Paid AS transaction_amount FROM appdb.system_recon t2 INNER JOIN appdb.credorex_index t1 ON t2.ID_trans = t1.merchant_reference_number_h9 AND CAST(t2.Paid AS FLOAT) = CAST(t1.transaction_amount AS FLOAT)) AS subquery);`;
-        const q7 = `SET SQL_SAFE_UPDATES = 1;`;
+        const q6 = `DELETE FROM appdb.system_recon WHERE (ID_trans, Paid) IN (SELECT merchant_reference_number_h9, transaction_amount FROM (SELECT t2.ID_trans AS merchant_reference_number_h9, t2.Paid AS transaction_amount FROM appdb.system_recon t2 INNER JOIN appdb.credorex_index t1 ON t2.ID_trans = t1.merchant_reference_number_h9 AND CAST(t2.Paid AS FLOAT) = CAST(t1.transaction_amount AS FLOAT)) AS subquery);`;
+        const q7 = `SET SQL_SAFE_UPDATES = 0;`;
+        const q8 = `DELETE FROM appdb.credorex_recon WHERE (merchant_reference_number_h9, transaction_amount) IN (SELECT ID_trans, Paid FROM (SELECT t1.merchant_reference_number_h9 AS ID_trans, t1.transaction_amount AS Paid FROM appdb.credorex_recon t1 INNER JOIN appdb.cp_credorex t2 ON t1.merchant_reference_number_h9 = t2.ID_trans AND CAST(t1.transaction_amount AS FLOAT) = CAST(t2.Paid AS FLOAT)) AS subquery);`;
+        const q9 = `SET SQL_SAFE_UPDATES = 1;`;
         return pool.query(q1)
         .then(()=>{
-           
             pool.query(q2)
             .then(()=>{
-              
                 pool.query(q3)
                 .then(()=>{
-                    
                     pool.query(q4)
                     .then(()=>{
-                       
                         pool.query(q5)
                         .then(()=>{
-                        
                             pool.query(q6)
                             .then(()=>{
-                              
-                                pool.query(q7);
+                                pool.query(q7)
+                                .then(()=>{
+                                    pool.query(q8)
+                                    .then(()=>{
+                                        pool.query(q9)
+                                    })
+                                });
                             });
                         });
                     });
                 });
             });
-        })
-        
-        
+        }) 
     }
     /*====================> (b) activate when reconciliation between credorx and system_recon when insert new data from credorex.*/
     
@@ -225,8 +225,7 @@ module.exports = class Data{
     /************************ Get Data from database ************************/
     static register_in_table(table_name, table_source,columns){
         if(table_source === 'credorex'){
-            
-            const q = `INSERT INTO appdb.${table_name} (${columns[0]}, ${columns[1]},${columns[2]}, ${columns[3]}, ${columns[4]},${columns[5]}, ${columns[6]},${columns[7]}, ${columns[8]},${columns[9]}, ${columns[10]}, ${columns[11]},${columns[12]}, ${columns[13]},${columns[14]}) SELECT statement_date, transaction_date,posting_date,transaction_currency,cs_settlement_currency,transaction_amount,transaction_type,fixed_transaction_fee,discount_rate,interchange,card_scheme_fees,acquiring_fee,net_activity,card_scheme,merchant_reference_number_h9 FROM appdb.${table_source} WHERE NOT EXISTS (SELECT 1 FROM ${table_name} WHERE ${table_name}.statement_date = ${table_source}.statement_date);`;
+            const q = `INSERT INTO appdb.${table_name} (${columns[0]}, ${columns[1]},${columns[2]}, ${columns[3]}, ${columns[4]},${columns[5]}, ${columns[6]},${columns[7]}, ${columns[8]},${columns[9]}, ${columns[10]}, ${columns[11]},${columns[12]}, ${columns[13]},${columns[14]}) SELECT statement_date, transaction_date,posting_date,transaction_currency,cs_settlement_currency,transaction_amount,transaction_type,fixed_transaction_fee,discount_rate,interchange,card_scheme_fees,acquiring_fee,net_activity,card_scheme,merchant_reference_number_h9 FROM appdb.${table_source} WHERE NOT EXISTS (SELECT 1 FROM appdb.${table_name} WHERE appdb.${table_name}.statement_date = ${table_source}.statement_date);`;
             return pool.query(q);
         }
         

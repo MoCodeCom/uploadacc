@@ -27,7 +27,7 @@ module.exports = class Data{
 
     //create table cp _ truelayer
     static createTable_cp_truelayer(){
-        const q = "CREATE TABLE cp_truelayer (id INT UNSIGNED NOT NULL AUTO_INCREMENT,ID_trans VARCHAR(20),sDate VARCHAR(20),rDate VARCHAR(50),Status VARCHAR(50),Paid VARCHAR(45),pCrn VARCHAR(45),Received VARCHAR(50),rCrn VARCHAR(50),Processor VARCHAR(50),Pay_out_agent VARCHAR(25),PID VARCHAR(50),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q = "CREATE TABLE cp_truelayer (id INT UNSIGNED NOT NULL AUTO_INCREMENT,ID_trans VARCHAR(20),sDate VARCHAR(20),rDate VARCHAR(50),Status VARCHAR(50),Paid VARCHAR(45),pCrn VARCHAR(45),Received VARCHAR(150),rCrn VARCHAR(50),Processor VARCHAR(50),Pay_out_agent VARCHAR(25),PID VARCHAR(50),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
     
@@ -188,7 +188,7 @@ module.exports = class Data{
 
 //|---------------------------------------------------------------------|
 //|                                                                     |
-//|                          Matching                                  |
+//|                          Matching                                   |
 //|_____________________________________________________________________|
     /************************ Matching *********************************/
     //Delete recon row under condition
@@ -209,5 +209,58 @@ module.exports = class Data{
 
 
 
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Register                                   |
+//|_____________________________________________________________________|
+    /************************ Register *********************************/
+    static register_in_table(){
+        const q = `INSERT INTO appdb.truelayer_index (amount,currency,status,type,reference,date,provideName,failureReason,statementDate) SELECT amount,currency,status,type,reference,date,provideName,failureReason,statementDate FROM appdb.truelayer WHERE NOT EXISTS (SELECT 1 FROM appdb.truelayer_index WHERE appdb.truelayer_index.statementDate = appdb.truelayer.statementDate);`;
+        return pool.query(q);
+    }
+
+
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Get Payments                               |
+//|_____________________________________________________________________|
+    /************************ Payment *********************************/
+    //Get payment
+    static get_payment_processor(table_name, payment_column, term){
+        const q = `SELECT * FROM ${table_name} WHERE ${ payment_column } = "${ term }";`;
+        return pool.query(q);
+    }
+
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Get Record Statement (Show)                |
+//|_____________________________________________________________________|
+    /************************ Payment *********************************/
+    static get_record_statement(table_name, column_date, date ,column_reference, reference){
+        //leave [refrence] right now 
+        const q = `SELECT * FROM appdb.${table_name} WHERE ${column_date}="${date}";`;
+        return pool.query(q);
+    }
+
+
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Get table                                  |
+//|_____________________________________________________________________|
+    static get_table(table_name){
+        const q =`SELECT * FROM appdb.${table_name};`;
+        return pool.query(q);
+    }
+
+
+//|---------------------------------------------------------------------|
+//|                                                                     |
+//|                          Analysis                                   |
+//|_____________________________________________________________________|
+
+    static refundList(table_name){
+        const q =`SELECT * FROM appdb.${table_name} WHERE type = 'refund' OR type = 'Refund' OR type = 'REFUND';`;
+        return pool.query(q);
+    }
 
 }
