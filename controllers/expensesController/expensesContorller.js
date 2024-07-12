@@ -48,7 +48,6 @@ exports.createExpensesList = (req,res, next)=>{
 
 exports.dropExpensestbl = (req, res, next)=>{
     const table = req.query.table;
-    console.log(table);
     expensesDb.deleteTable(table)
     .then(result =>{
         res.status(200).json({
@@ -97,7 +96,7 @@ exports.deleteInvoice = (req, res, next)=>{
 /***************************** Insert Expenses *********************/
 exports.insert_expenses_detail = (req, res, next)=>{
     const data = req.body.data;
-    console.log(data);
+ 
     expensesDb.adding_expenses_detail(data)
     .then(result =>{
         if (err) {

@@ -5,12 +5,12 @@ const pool = require('../util/database');
 module.exports = class Data{
     /*****************************************************Create table ***************************************/
     static createTable_expenses_details(){
-        const q = "CREATE TABLE expenses_detail (id INT UNSIGNED NOT NULL AUTO_INCREMENT,expenses_name VARCHAR(150),description VARCHAR(150),account_number VARCHAR(25),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q = "CREATE TABLE expenses_detail (id INT UNSIGNED NOT NULL AUTO_INCREMENT,expenses_name VARCHAR(150),description VARCHAR(150),account_number VARCHAR(25), account_name VARCHAR(100),PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
 
     static createTable_expenses_list(){
-        const q = "CREATE TABLE expenses_list (id INT UNSIGNED NOT NULL AUTO_INCREMENT,invoice_number VARCHAR(100),about VARCHAR(100),beneficiary_department VARCHAR(150),invoice_date VARCHAR(75),payment_date VARCHAR(75),account_number VARCHAR(100),items VARCHAR(20),amount VARCHAR(20),total VARCHAR(20),note VARCHAR(300), status BOOLEAN DEFAULT FALSE,PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
+        const q = "CREATE TABLE expenses_list (id INT UNSIGNED NOT NULL AUTO_INCREMENT,invoice_number VARCHAR(100),about VARCHAR(100),beneficiary_department VARCHAR(150),invoice_date VARCHAR(75),payment_date VARCHAR(75),account_number VARCHAR(100), account_name VARCHAR(100),items VARCHAR(20),amount VARCHAR(20),total VARCHAR(20),note VARCHAR(300), status BOOLEAN DEFAULT FALSE,PRIMARY KEY (id),UNIQUE INDEX id_UNIQUE (id ASC) VISIBLE);";
         return pool.query(q);
     }
 
@@ -97,12 +97,12 @@ module.exports = class Data{
     /*************************************************** Insert data in table **********************************/
 
     static adding_expenses_detail(column){
-        const q1 = `INSERT INTO appdb.expenses_detail (expenses_name,description,account_number) VALUES ${column[0]},${column[1]},${column[2]};`;
+        const q1 = `INSERT INTO appdb.expenses_detail (expenses_name,description,account_number,account_name) VALUES ${column[0]},${column[1]},${column[2]},${column[3]};`;
         return pool.query(q1);
     }
 
     static adding_expenses_list(column){
-        const q1 = `INSERT INTO appdb.expenses_list (invoice_number,about,beneficiary_department,invoice_date,payment_date,account_number,items,amount,total,note) VALUES ("${column['invoice_number']}","${column['about']}","${column['department']}","${column['invoice_date']}","${column['payment_date']}","${column['accountNumber']}","${column['item']}","${column['amount']}","${column['total']}","${column['note']}");`;
+        const q1 = `INSERT INTO appdb.expenses_list (invoice_number,about,beneficiary_department,invoice_date,payment_date,account_number, account_name,items,amount,total,note) VALUES ("${column['invoice_number']}","${column['about']}","${column['department']}","${column['invoice_date']}","${column['payment_date']}","${column['accountNumber']}","${column['accountName']}","${column['item']}","${column['amount']}","${column['total']}","${column['note']}");`;
         return pool.query(q1);
     }
 
